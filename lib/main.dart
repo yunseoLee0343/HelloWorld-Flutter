@@ -7,8 +7,10 @@ import 'model/chat/message.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => Messages(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => Messages()),
+      ],
       child: MyApp(),
     ),
   );

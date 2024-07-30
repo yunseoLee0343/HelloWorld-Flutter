@@ -5,6 +5,7 @@ class MyBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomAppBar(
       height: 60,
+      color: Colors.grey[100],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
@@ -24,12 +25,6 @@ class MyBottomBar extends StatelessWidget {
             icon: Icon(Icons.person_outline_rounded, size: 24,),
             onPressed: () {
               Navigator.pushNamed(context, '/profile');
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.mail),
-            onPressed: () {
-              Navigator.pushNamed(context, '/messages');
             },
           ),
         ],

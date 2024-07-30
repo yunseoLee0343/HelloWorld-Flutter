@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hello_world_newest/widget/appbar/bottombar.dart';
 import 'package:provider/provider.dart';
 
 import '../model/chat/message.dart';
 import '../widget/appbar/appbar.dart';
+import '../widget/appbar/bottombar.dart';
 import '../widget/chat/list.dart';
 import '../widget/chat/input.dart';
 
@@ -18,12 +18,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+  bool _isLoading = false;
 
-  void _sendMessage() {
+  void _sendMessage() async {
     final message = _messageController.text;
+
     if (message.isNotEmpty) {
-      Provider.of<Messages>(context, listen: false).addMessage(message);
-      _messageController.clear();
+      setState(() {
+        _isLoading = true;
+        _focusNode.unfocus();
+      });
+
+      await Provider.of<Messages>(context, listen: false).addMessage(message);
+
+      setState(() {
+        _isLoading = false;
+        _messageController.clear();
+      });
     }
   }
 
@@ -31,23 +43,29 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MyAppBar(),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(left: 24, right: 24, top: 5, bottom: 29),
-          child: Column(
-            children: [
-              const Expanded(
-                child: ChatList(),
-              ),
-              MessageInputField(
+      body: Container(
+        padding: const EdgeInsets.all(24),
+        color: Colors.grey[100],
+        child: Stack(
+          children: [
+            ListView(
+              padding: const EdgeInsets.only(bottom: 80),
+              children: const [
+                ChatList(),
+              ],
+            ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: MessageInputField(
                 controller: _messageController,
                 onSend: _sendMessage,
+                focusNode: _focusNode,
+                isSendEnabled: !_isLoading,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: MyBottomBar(),

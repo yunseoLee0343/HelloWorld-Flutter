@@ -11,15 +11,23 @@ class ChatList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<Messages>(
       builder: (context, messages, child) {
-        return ListView.builder(
-          itemCount: messages.messages.length,
-          itemBuilder: (context, index) {
-            final message = messages.messages[index];
-            return ChatBubble(
-              title: message,
-              isBlue: index % 2 == 0,
-            );
-          },
+        return Container(
+          height: 540,
+          child: ListView.builder(
+            // shrinkWrap: true,
+            itemCount: messages.messages.length,
+            itemBuilder: (context, index) {
+              final message = messages.messages[index];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                alignment: index % 2 == 0 ? Alignment.centerLeft : Alignment.centerRight,
+                child: ChatBubble(
+                  title: message,
+                  isBlue: index % 2 == 1,
+                ),
+              );
+            },
+          ),
         );
       },
     );

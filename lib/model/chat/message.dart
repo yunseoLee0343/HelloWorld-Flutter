@@ -3,15 +3,21 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Messages extends ChangeNotifier {
-  List<String> _messages = [];
+  final List<String> _messages = [
+    'Hello, how can I help you?',
+    'I need help with my visa application',
+    'Sure, I can help you with that',
+  ];
 
   List<String> get messages => _messages;
 
-  void addMessage(String message) async {
+  Future<List<String>> addMessage(String message) async {
     _messages.add(message);
     notifyListeners();
 
     await sendMessageToServer(message);
+    print('Message added: $message');
+    return _messages;
   }
 
   Future<void> sendMessageToServer(String message) async {

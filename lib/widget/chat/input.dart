@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 class MessageInputField extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
+  final FocusNode focusNode;
+  final bool isSendEnabled;
 
   const MessageInputField({
     required this.controller,
     required this.onSend,
+    required this.focusNode,
+    this.isSendEnabled = false,
   });
 
   @override
@@ -15,7 +19,9 @@ class MessageInputField extends StatefulWidget {
 
 class _MessageInputFieldState extends State<MessageInputField> {
   final _textFieldKey = GlobalKey();
-  double _textFieldHeight = 56.0; // 초기 높이
+  double _textFieldHeight = 56.0;
+
+  get isSendEnabled => widget.isSendEnabled;
 
   @override
   void initState() {
@@ -82,18 +88,22 @@ class _MessageInputFieldState extends State<MessageInputField> {
                 fontSize: 13,
                 fontWeight: FontWeight.normal,
               ),
-              maxLines: null, // 멀티라인 가능
+              maxLines: null,
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.send, size: 24),
-            onPressed: widget.onSend,
-            color: const Color.fromRGBO(51, 105, 255, 1),
-          ),
-          IconButton(
-            icon: const Icon(Icons.mic, size: 24),
-            onPressed: () {},
-            color: const Color.fromRGBO(112, 112, 112, 1),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.send, size: 24),
+                onPressed: isSendEnabled ? widget.onSend : null,
+                color: const Color.fromRGBO(51, 105, 255, 1),
+              ),
+              IconButton(
+                icon: const Icon(Icons.mic, size: 24),
+                onPressed: () {},
+                color: const Color.fromRGBO(84, 84, 84, 1),
+              ),
+            ],
           ),
         ],
       ),

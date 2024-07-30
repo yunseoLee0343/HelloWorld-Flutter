@@ -13,11 +13,16 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 4),
       padding: EdgeInsets.all(16),
+      width: 270,
       decoration: BoxDecoration(
-        color: isBlue ? Colors.blue : Colors.grey[300],
-        borderRadius: BorderRadius.circular(12),
+        color: isBlue ? Color.fromRGBO(51, 105, 255, 1): Colors.grey[300],
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+          bottomLeft: Radius.circular(isBlue ? 16 : 0),
+          bottomRight: Radius.circular(isBlue ? 0 : 16),
+        ),
       ),
       child: Text(
         title,
