@@ -43,29 +43,33 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const MyAppBar(),
-      body: Container(
-        padding: const EdgeInsets.all(24),
-        color: Colors.grey[100],
-        child: Stack(
-          children: [
-            ListView(
-              padding: const EdgeInsets.only(bottom: 80),
-              children: const [
-                ChatList(),
-              ],
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: MessageInputField(
-                controller: _messageController,
-                onSend: _sendMessage,
-                focusNode: _focusNode,
-                isSendEnabled: !_isLoading,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          child: Stack(
+            children: [
+              ListView(
+                padding: const EdgeInsets.only(bottom: 80),
+                children: const [
+                  ChatList(),
+                ],
               ),
-            ),
-          ],
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: MessageInputField(
+                  controller: _messageController,
+                  onSend: _sendMessage,
+                  focusNode: _focusNode,
+                  isSendEnabled: !_isLoading,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: MyBottomBar(),

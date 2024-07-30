@@ -17,13 +17,18 @@ class ChatList extends StatelessWidget {
             // shrinkWrap: true,
             itemCount: messages.messages.length,
             itemBuilder: (context, index) {
-              final message = messages.messages[index];
+              final messageData = messages.messages[index];
+              final message = messageData['message'];
+              final isBlue = messageData['isBlue'];
+              final isLastMessage = index == messages.messages.length - 1;
+
               return Container(
                 margin: const EdgeInsets.only(bottom: 16),
-                alignment: index % 2 == 0 ? Alignment.centerLeft : Alignment.centerRight,
+                alignment: isBlue ? Alignment.centerRight : Alignment.centerLeft,
                 child: ChatBubble(
                   title: message,
-                  isBlue: index % 2 == 1,
+                  isBlue: isBlue,
+                  isLastMessage: isLastMessage,
                 ),
               );
             },

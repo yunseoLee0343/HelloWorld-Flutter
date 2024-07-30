@@ -3,27 +3,26 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class Messages extends ChangeNotifier {
-  final List<String> _messages = [
-    'Hello, how can I help you?',
-    'I need help with my visa application',
-    'Sure, I can help you with that',
+  final List<Map<String, dynamic>> _messages = [
+    {'message': 'Hello, how can I help you?', 'isBlue': false},
+    {'message': 'I need help with my visa application', 'isBlue': true},
+    {'message': 'Sure, I can help you with that', 'isBlue': false},
   ];
 
-  List<String> get messages => _messages;
+  List<Map<String, dynamic>> get messages => _messages;
 
-  Future<List<String>> addMessage(String message) async {
-    _messages.add(message);
+  Future<void> addMessage(String message) async {
+    _messages.add({'message': message, 'isBlue': true});
     notifyListeners();
 
     final serverResponse = await sendMessageToServer(message);
 
     if (serverResponse != null) {
-      _messages.add(serverResponse);
+      _messages.add({'message': serverResponse, 'isBlue': false});
       notifyListeners();
     }
 
     print('Message added: $message');
-    return _messages;
   }
 
   Future<String?> sendMessageToServer(String message) async {
