@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // Smooth scroll to the bottom after adding a message
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
-      });;
+      });
     }
   }
 
@@ -59,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: const MyAppBar(),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).unfocus();
+          FocusScope.of(context).unfocus(); // Hide the keyboard
         },
         child: Container(
           padding: const EdgeInsets.all(24),
