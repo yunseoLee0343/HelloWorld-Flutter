@@ -17,84 +17,77 @@ class MyMapPage extends StatefulWidget {
 
 class _MyMapPageState extends State<MyMapPage> {
   final Completer<GoogleMapController> _mapControllerCompleter = Completer();
-  String _address = "서울 중구 을지로 281";
-  String _locationResult = "";
   late double _latitude;
   late double _longitude;
-  late String _roadAddress;
-  late String _jibunAddress;
   Set<Marker> _markers = {};
   bool _mapReady = false;
+  String _locationResult = "";
 
   @override
   void initState() {
     super.initState();
-    _fetchCoordinates();
+    _fetchNearestCenters();
   }
 
-  Future<void> _fetchCoordinates() async {
-    final String apiUrl = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode";
+  Future<void> _fetchNearestCenters() async {
+    final String apiUrl = "https://your-backend-url/api/nearest-centers";
+    final double userLatitude = 37.5665; // replace with user's actual latitude
+    final double userLongitude = 126.9780; // replace with user's actual longitude
+
     final response = await http.get(
-      Uri.parse('$apiUrl?query=${Uri.encodeComponent(_address)}'),
-      headers: {
-        'X-NCP-APIGW-API-KEY-ID': '0y26j6fv1v',
-        'X-NCP-APIGW-API-KEY': 'ok8B9H8mtT7igIO2Vl786Q4qX4smdpKownLGUnKf',
-      },
+      Uri.parse('$apiUrl?latitude=$userLatitude&longitude=$userLongitude'),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final addresses = data['addresses'] as List<dynamic>;
+      if (data['status'] == 'success') {
+        final centers = data['data'] as List<dynamic>;
+        for (var center in centers) {
+          _addMarker(center);
+        }
 
-      if (addresses.isNotEmpty) {
-        final address = addresses[0];
         setState(() {
-          _roadAddress = address['roadAddress'] ?? 'No Road Address';
-          _jibunAddress = address['jibunAddress'] ?? 'No Jibun Address';
-          _latitude = double.parse(address['y']);
-          _longitude = double.parse(address['x']);
-          _locationResult = 'Road Address: $_roadAddress, Jibun Address: $_jibunAddress, Latitude: $_latitude, Longitude: $_longitude';
+          _locationResult = centers.map((center) =>
+          'Name: ${center['name']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}'
+          ).join('\n');
         });
 
-        log('Coordinates: $_locationResult', name: 'GoogleMap');
-
-        // Call _addMarkerToMap() after fetching the coordinates
-        if (_mapReady) {
-          _addMarkerToMap();
-        }
+        log('Centers: $_locationResult', name: 'GoogleMap');
       } else {
         setState(() {
-          _locationResult = 'No address found';
+          _locationResult = 'Failed to get centers';
         });
-        log('No address found', name: 'GoogleMap');
+        log('Failed to get centers', name: 'GoogleMap');
       }
     } else {
       setState(() {
-        _locationResult = 'Failed to get coordinates';
+        _locationResult = 'Failed to get centers';
       });
-      log('Failed to get coordinates', name: 'GoogleMap');
+      log('Failed to get centers', name: 'GoogleMap');
     }
   }
 
-  Future<void> _addMarkerToMap() async {
+  void _addMarker(Map<String, dynamic> center) async {
     final GoogleMapController controller = await _mapControllerCompleter.future;
+    final Marker marker = Marker(
+      markerId: MarkerId(center['name']),
+      position: LatLng(center['latitude'], center['longitude']),
+      infoWindow: InfoWindow(
+        title: center['road_address'],
+        snippet: '${center['jibun_address']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}',
+      ),
+    );
 
     setState(() {
-      _markers.add(
-        Marker(
-          markerId: MarkerId('address_marker'),
-          position: LatLng(_latitude, _longitude),
-          infoWindow: InfoWindow(
-            title: _roadAddress,
-            snippet: _jibunAddress,
-          ),
-        ),
-      );
+      _markers.add(marker);
     });
 
-    controller.animateCamera(
-      CameraUpdate.newLatLngZoom(LatLng(_latitude, _longitude), 15),
-    );
+    if (!_mapReady) {
+      controller.animateCamera(
+        CameraUpdate.newLatLngZoom(LatLng(center['latitude'], center['longitude']), 15),
+      );
+      _mapReady = true;
+    }
   }
 
   @override
@@ -102,19 +95,25 @@ class _MyMapPageState extends State<MyMapPage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: GoogleMap(
-          onMapCreated: (GoogleMapController controller) {
-            _mapControllerCompleter.complete(controller);
-            setState(() {
-              _mapReady = true;
-            });
-            log("onMapCreated", name: "GoogleMap");
-          },
-          initialCameraPosition: CameraPosition(
-            target: LatLng(37.5665, 126.9780), // Default position to Seoul
-            zoom: 10,
-          ),
-          markers: _markers,
+        body: Column(
+          children: [
+            Expanded(
+              child: GoogleMap(
+                onMapCreated: (GoogleMapController controller) {
+                  _mapControllerCompleter.complete(controller);
+                },
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(37.5665, 126.9780), // Default position to Seoul
+                  zoom: 30,
+                ),
+                markers: _markers,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(16),
+              child: Text(_locationResult),
+            ),
+          ],
         ),
         bottomNavigationBar: MyBottomBar(),
       ),
