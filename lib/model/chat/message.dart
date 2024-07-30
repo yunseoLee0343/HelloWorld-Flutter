@@ -15,12 +15,18 @@ class Messages extends ChangeNotifier {
     _messages.add(message);
     notifyListeners();
 
-    await sendMessageToServer(message);
+    final serverResponse = await sendMessageToServer(message);
+
+    if (serverResponse != null) {
+      _messages.add(serverResponse);
+      notifyListeners();
+    }
+
     print('Message added: $message');
     return _messages;
   }
 
-  Future<void> sendMessageToServer(String message) async {
+  Future<String?> sendMessageToServer(String message) async {
     const url = 'https://your-server-endpoint.com/api/messages';
     try {
       final response = await http.post(
@@ -33,11 +39,15 @@ class Messages extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         print('Message sent successfully');
+        final responseData = jsonDecode(response.body);
+        return responseData['response'] as String?;
       } else {
         print('Failed to send message. Status code: ${response.statusCode}');
+        return null;
       }
     } catch (e) {
       print('Error sending message: $e');
+      return null;
     }
   }
 }
