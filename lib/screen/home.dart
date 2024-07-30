@@ -19,6 +19,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _messageController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
   void _sendMessage() async {
@@ -36,7 +37,20 @@ class _MyHomePageState extends State<MyHomePage> {
         _isLoading = false;
         _messageController.clear();
       });
+
+      // Smooth scroll to the bottom after adding a message
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });;
     }
+  }
+
+  void _scrollToBottom() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300), // Adjust the duration as needed
+      curve: Curves.easeOut, // Smooth scrolling
+    );
   }
 
   @override
@@ -52,6 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Stack(
             children: [
               ListView(
+                controller: _scrollController,
                 padding: const EdgeInsets.only(bottom: 80),
                 children: const [
                   ChatList(),
