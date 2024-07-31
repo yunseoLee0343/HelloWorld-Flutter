@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hello_world_newest/widget/appbar/bottombar.dart';
 
@@ -30,35 +29,59 @@ class _MyMapPageState extends State<MyMapPage> {
   }
 
   Future<void> _fetchNearestCenters() async {
-    final String apiUrl = "https://your-backend-url/api/nearest-centers";
-    final double userLatitude = 37.5665; // replace with user's actual latitude
-    final double userLongitude = 126.9780; // replace with user's actual longitude
-
-    final response = await http.get(
-      Uri.parse('$apiUrl?latitude=$userLatitude&longitude=$userLongitude'),
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['status'] == 'success') {
-        final centers = data['data'] as List<dynamic>;
-        for (var center in centers) {
-          _addMarker(center);
+    // Dummy data
+    const String response = '''
+    {
+      "status": "success",
+      "data": [
+        {
+          "name": "상담센터 1",
+          "road_address": "서울특별시 중구 을지로 281",
+          "jibun_address": "서울특별시 중구 을지로7가 143",
+          "latitude": 37.5675466,
+          "longitude": 127.0099323,
+          "distance": 1.2,
+          "is_open": true,
+          "closing_time": "18:00"
+        },
+        {
+          "name": "상담센터 2",
+          "road_address": "서울특별시 중구 을지로 282",
+          "jibun_address": "서울특별시 중구 을지로7가 144",
+          "latitude": 37.5675467,
+          "longitude": 127.0099324,
+          "distance": 2.5,
+          "is_open": false,
+          "closing_time": "18:00"
+        },
+        {
+          "name": "상담센터 3",
+          "road_address": "서울특별시 중구 을지로 283",
+          "jibun_address": "서울특별시 중구 을지로7가 145",
+          "latitude": 37.5675468,
+          "longitude": 127.0099325,
+          "distance": 3.0,
+          "is_open": true,
+          "closing_time": "18:00"
         }
+      ]
+    }
+    ''';
 
-        setState(() {
-          _locationResult = centers.map((center) =>
-          'Name: ${center['name']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}'
-          ).join('\n');
-        });
-
-        log('Centers: $_locationResult', name: 'GoogleMap');
-      } else {
-        setState(() {
-          _locationResult = 'Failed to get centers';
-        });
-        log('Failed to get centers', name: 'GoogleMap');
+    final data = jsonDecode(response);
+    if (data['status'] == 'success') {
+      final centers = data['data'] as List<dynamic>;
+      for (var center in centers) {
+        _addMarker(center);
       }
+
+      setState(() {
+        _locationResult = centers.map((center) =>
+        'Name: ${center['name']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}'
+        ).join('\n');
+      });
+
+      log('Centers: $_locationResult', name: 'GoogleMap');
     } else {
       setState(() {
         _locationResult = 'Failed to get centers';
@@ -104,7 +127,7 @@ class _MyMapPageState extends State<MyMapPage> {
                 },
                 initialCameraPosition: CameraPosition(
                   target: LatLng(37.5665, 126.9780), // Default position to Seoul
-                  zoom: 30,
+                  zoom: 15,
                 ),
                 markers: _markers,
               ),

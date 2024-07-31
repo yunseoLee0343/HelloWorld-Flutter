@@ -22,8 +22,20 @@ class _MyHomePageState extends State<MyHomePage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
-  void _sendMessage() async {
-    final message = _messageController.text;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arguments = ModalRoute.of(context)!.settings.arguments as Map?;
+      print("arguments: " + arguments.toString());
+      if (arguments != null && arguments['question'] != null) {
+        _sendMessage(arguments['question']);
+      }
+    });
+  }
+
+  void _sendMessage([String? initialMessage]) async {
+    final message = initialMessage ?? _messageController.text;
 
     if (message.isNotEmpty) {
       setState(() {
@@ -48,8 +60,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _scrollToBottom() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent,
-      duration: const Duration(milliseconds: 300), // Adjust the duration as needed
-      curve: Curves.easeOut, // Smooth scrolling
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
     );
   }
 
@@ -78,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 right: 0,
                 child: MessageInputField(
                   controller: _messageController,
-                  onSend: _sendMessage,
+                  onSend: () => _sendMessage(),
                   focusNode: _focusNode,
                   isSendEnabled: !_isLoading,
                 ),

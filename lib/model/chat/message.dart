@@ -62,7 +62,7 @@ class Messages extends ChangeNotifier {
 
     try {
       // 서버로 메시지 전송 및 응답 스트리밍
-      final serverResponse = await sendMessageToServer(message, userId, roomId);
+      final serverResponse = await sendMessageToServer(message, roomId, userId);
 
       if (serverResponse != null) {
         // 서버 응답을 리스트에 추가하고 변경 사항 알리기
