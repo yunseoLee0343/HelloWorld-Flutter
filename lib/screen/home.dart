@@ -43,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _focusNode.unfocus();
       });
 
-      await Provider.of<Messages>(context, listen: false).addMessage(message, '123', '456');
+      await Provider.of<Messages>(context, listen: false).addMessage(message, 'room1', 'user1');
 
       setState(() {
         _isLoading = false;

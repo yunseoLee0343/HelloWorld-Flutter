@@ -48,6 +48,12 @@ class MyApp extends StatelessWidget {
         '/chat': (context) => MyHomePage(title: 'chat'),
         '/search': (context) => MyMapPage(title: 'search'),
       },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (context) => Scaffold(
+          appBar: AppBar(title: Text("404")),
+          body: Center(child: Text("Page not found")),
+        ));
+      },
     );
   }
 }

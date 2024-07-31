@@ -112,7 +112,8 @@ class _ChatIntroPageState extends State<ChatIntroPage> {
                   controller: _messageController,
                   onSend: () {
                     _setFirstLaunchFlag();  // 처음 실행된 경우 플래그 설정
-                    Navigator.pushReplacementNamed(context, '/chat');
+                    // Navigator.pushReplacementNamed(context, '/chat');
+                    _navigateToChat(_messageController.text);
                   },
                   focusNode: _focusNode,
                   isSendEnabled: !_isLoading,
