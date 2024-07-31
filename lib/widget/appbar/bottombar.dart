@@ -16,19 +16,19 @@ class MyBottomBar extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.chat_outlined, size: 24),
             onPressed: () {
-              onTap(0); // 0번 페이지 (Chat)
+              onTap(0);
             },
           ),
           IconButton(
             icon: Icon(Icons.map_outlined, size: 24),
             onPressed: () {
-              onTap(1); // 1번 페이지 (Map)
+              onTap(1);
             },
           ),
           IconButton(
             icon: Icon(Icons.person_outline_rounded, size: 24),
             onPressed: () {
-              onTap(2); // 2번 페이지 (Profile, 필요 시 추가)
+              onTap(2);
             },
           ),
         ],

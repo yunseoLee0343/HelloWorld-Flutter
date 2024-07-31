@@ -76,9 +76,10 @@ class _MyMapPageState extends State<MyMapPage> {
       }
 
       setState(() {
-        _locationResult = centers.map((center) =>
-        'Name: ${center['name']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}'
-        ).join('\n');
+        _locationResult = centers
+            .map((center) =>
+                'Name: ${center['name']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}')
+            .join('\n');
       });
 
       log('Centers: $_locationResult', name: 'GoogleMap');
@@ -97,7 +98,8 @@ class _MyMapPageState extends State<MyMapPage> {
       position: LatLng(center['latitude'], center['longitude']),
       infoWindow: InfoWindow(
         title: center['road_address'],
-        snippet: '${center['jibun_address']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}',
+        snippet:
+            '${center['jibun_address']}, Distance: ${center['distance']} km, Open: ${center['is_open']}, Closing Time: ${center['closing_time']}',
       ),
     );
 
@@ -107,7 +109,8 @@ class _MyMapPageState extends State<MyMapPage> {
 
     if (!_mapReady) {
       controller.animateCamera(
-        CameraUpdate.newLatLngZoom(LatLng(center['latitude'], center['longitude']), 15),
+        CameraUpdate.newLatLngZoom(
+            LatLng(center['latitude'], center['longitude']), 15),
       );
       _mapReady = true;
     }
@@ -126,7 +129,8 @@ class _MyMapPageState extends State<MyMapPage> {
                   _mapControllerCompleter.complete(controller);
                 },
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(37.5665, 126.9780), // Default position to Seoul
+                  target:
+                      LatLng(37.5665, 126.9780), // Default position to Seoul
                   zoom: 15,
                 ),
                 markers: _markers,

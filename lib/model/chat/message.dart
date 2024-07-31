@@ -5,42 +5,38 @@ import 'dart:convert';
 
 class Messages extends ChangeNotifier {
   final Map<String, List<Map<String, dynamic>>> _messagesByRoomAndUser = {
-    // room1에서 user1의 메시지
-    'room1-user1': [
+    'user1-room1': [
       {'message': 'Hello, how are you?', 'isBlue': false},
       {'message': 'I am doing well, thank you!', 'isBlue': true},
       {'message': 'What can I help you with today?', 'isBlue': false},
     ],
 
     // room1에서 user2의 메시지
-    'room1-user2': [
+    'user2-room1': [
       {'message': 'Good morning!', 'isBlue': false},
       {'message': 'Good morning! How can I assist you?', 'isBlue': true},
       {'message': 'I need information on the new policy.', 'isBlue': false},
     ],
 
-    // room2에서 user1의 메시지
-    'room2-user1': [
+    'user1-room2': [
       {'message': 'Hi there, welcome to room2!', 'isBlue': false},
       {'message': 'Thank you! What’s the agenda for today?', 'isBlue': true},
     ],
 
-    // room2에서 user3의 메시지
-    'room2-user3': [
+    'user3-room2': [
       {'message': 'Hello, everyone!', 'isBlue': false},
       {'message': 'Hello! Glad to see you here.', 'isBlue': true},
       {'message': 'Can we start the discussion now?', 'isBlue': false},
     ],
 
-    // room3에서 user1의 메시지
-    'room3-user1': [
+    'user1-room3': [
       {'message': 'Hey! Ready for our meeting?', 'isBlue': false},
       {'message': 'Yes, I am ready.', 'isBlue': true},
       {'message': 'Great! Let’s begin.', 'isBlue': false},
     ],
 
     // room3에서 user2의 메시지
-    'room3-user2': [
+    'user2-room3': [
       {'message': 'Hello everyone!', 'isBlue': false},
       {'message': 'Hello! We are just about to start.', 'isBlue': true},
       {'message': 'Awesome, I’m excited!', 'isBlue': false},
@@ -48,12 +44,12 @@ class Messages extends ChangeNotifier {
   };
 
   List<Map<String, dynamic>> getMessages(String userId, String roomId) {
-    final key = _getRoomUserKey(roomId, userId);
+    final key = _getRoomUserKey(userId, roomId);
     return _messagesByRoomAndUser[key] ?? [];
   }
 
-  Future<void> addMessage(String message, String roomId, String userId) async {
-    final key = _getRoomUserKey(roomId, userId);
+  Future<void> addMessage(String message, String userId, String roomId) async {
+    final key = _getRoomUserKey(userId, roomId);
 
     // 사용자 메시지를 리스트에 추가하고 변경 사항 알리기
     _messagesByRoomAndUser.putIfAbsent(key, () => []);
@@ -62,7 +58,7 @@ class Messages extends ChangeNotifier {
 
     try {
       // 서버로 메시지 전송 및 응답 스트리밍
-      final serverResponse = await sendMessageToServer(message, roomId, userId);
+      final serverResponse = await sendMessageToServer(message, userId, roomId);
 
       if (serverResponse != null) {
         // 서버 응답을 리스트에 추가하고 변경 사항 알리기
@@ -78,7 +74,7 @@ class Messages extends ChangeNotifier {
     print('Message added: $message');
   }
 
-  Future<String?> sendMessageToServer(String message, String roomId, String userId) async {
+  Future<String?> sendMessageToServer(String message, String userId, String roomId) async {
     final url = Uri.parse('http://localhost:8082/chat/ask?roomId=$roomId');
 
     // 헤더 설정
@@ -145,7 +141,7 @@ class Messages extends ChangeNotifier {
     return responseCompleter.future;
   }
 
-  String _getRoomUserKey(String roomId, String userId) {
-    return '$roomId-$userId';
+  String _getRoomUserKey(String userId, String roomId) {
+    return '$userId-$roomId';
   }
 }
