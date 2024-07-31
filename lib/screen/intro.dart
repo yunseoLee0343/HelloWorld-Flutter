@@ -123,7 +123,7 @@ class _ChatIntroPageState extends State<ChatIntroPage> {
           ),
         ),
       ),
-      bottomNavigationBar: MyBottomBar(),
+      bottomNavigationBar: MyBottomBar(onTap: (int value) {  },),
     );
   }
 

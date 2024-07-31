@@ -138,7 +138,7 @@ class _MyMapPageState extends State<MyMapPage> {
             ),
           ],
         ),
-        bottomNavigationBar: MyBottomBar(),
+        // bottomNavigationBar: MyBottomBar(),
       ),
     );
   }
