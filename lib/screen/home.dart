@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _focusNode.unfocus();
       });
 
-      await Provider.of<Messages>(context, listen: false).addMessage(message);
+      await Provider.of<Messages>(context, listen: false).addMessage(message, '123', '456');
 
       setState(() {
         _isLoading = false;
@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: _scrollController,
                 padding: const EdgeInsets.only(bottom: 80),
                 children: const [
-                  ChatList(),
+                  ChatList(userId: 'user1', roomId: 'room1'),
                 ],
               ),
               Positioned(
