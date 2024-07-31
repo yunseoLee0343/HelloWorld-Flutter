@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:hello_world_newest/widget/appbar/bottombar.dart';
 
 class MyMapPage extends StatefulWidget {
   final String title;
@@ -18,7 +18,7 @@ class _MyMapPageState extends State<MyMapPage> {
   final Completer<GoogleMapController> _mapControllerCompleter = Completer();
   late double _latitude;
   late double _longitude;
-  Set<Marker> _markers = {};
+  final Set<Marker> _markers = {};
   bool _mapReady = false;
   String _locationResult = "";
 
@@ -128,7 +128,7 @@ class _MyMapPageState extends State<MyMapPage> {
                 onMapCreated: (GoogleMapController controller) {
                   _mapControllerCompleter.complete(controller);
                 },
-                initialCameraPosition: CameraPosition(
+                initialCameraPosition: const CameraPosition(
                   target:
                       LatLng(37.5665, 126.9780), // Default position to Seoul
                   zoom: 15,
@@ -137,7 +137,7 @@ class _MyMapPageState extends State<MyMapPage> {
               ),
             ),
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Text(_locationResult),
             ),
           ],
